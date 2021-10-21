@@ -14,12 +14,29 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(here)
 library(kableExtra)
+library(plotly)
+library(janitor)
 
 ```
 
 ```{r}
 
-urchins <- read_csv(here("data", "urchins.csv"))
+urchins <- read_csv(here("data", "urchins.csv")) %>% 
+  clean_names()
+
+urchins_plot <- ggplot(data = urchins,
+       aes(x = size)) +
+  geom_histogram(bins = 10, aes(fill = common_name), color = "black") +
+  facet_wrap(~ common_name) +
+  xlim(0,15) +
+  ylim(0,14000) +
+  scale_fill_manual(values = c("purple","red")) +
+  theme_classic() +
+  labs(x = "urchin diameter (cm)",
+       y = "frequency",
+       fill = "Common Name")
+
+ggplotly(urchins_plot)
 
 ```
 
