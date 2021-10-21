@@ -1,0 +1,25 @@
+---
+title: "Task 3 - Santa Barbara Urchins"
+author: "Taylor Medina"
+date: "10/21/2021"
+output: html_document
+---
+
+**Data:** Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b. 
+
+```{r setup, include=TRUE, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Load in packages
+library(tidyverse)
+library(here)
+library(kableExtra)
+
+```
+
+```{r}
+
+urchins <- read_csv(here("data", "urchins.csv"))
+
+```
+
