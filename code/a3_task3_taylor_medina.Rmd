@@ -10,7 +10,7 @@ output: html_document
 ### Setup
 ```{r setup, include=TRUE, warning=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-options(digits = 3)
+options(digits = 3) # sets sig figs to 3
 
 # Load in packages
 library(tidyverse)
@@ -31,14 +31,14 @@ urchins <- read_csv(here("data", "urchins.csv")) %>%
 urchins_plot <- ggplot(data = urchins,
        aes(x = size)) +
   geom_histogram(bins = 10, aes(fill = common_name), color = "black") +
-  facet_wrap(~ common_name) +
-  xlim(0,15) +
-  ylim(0,14000) +
-  scale_fill_manual(values = c("purple","red")) +
+  facet_wrap(~ common_name) + # splits plots by species
+  xlim(0,15) + # sets x limit to 15 cm
+  ylim(0,14000) + # sets y limit to a count of 14000
+  scale_fill_manual(values = c("purple","red")) + # specifies colors manually
   theme_classic() +
   labs(x = "urchin diameter (cm)",
        y = "frequency",
-       fill = "Common Name")
+       fill = "Common Name") # sets name of legend
 
 ggplotly(urchins_plot)
 
@@ -49,29 +49,29 @@ ggplotly(urchins_plot)
 
 urchin_stats <- urchins %>% 
   group_by(common_name) %>% 
-  summarize(mean_diameter_cm = mean(size, na.rm = TRUE),
-            median_diameter_cm = median(size, na.rm = TRUE),
-            standard_deviation = sd(size, na.rm = TRUE),
-            sample_size = n())
+  summarize(mean_diameter_cm = mean(size, na.rm = TRUE), # calculates mean diameter
+            median_diameter_cm = median(size, na.rm = TRUE), # calculates median diameter
+            standard_deviation = sd(size, na.rm = TRUE), # calculates standard deviation 
+            sample_size = n()) # sample size count
 
 urchin_stats %>% 
-  kable(col.names = c("Species",
+  kable(col.names = c("Species", 
                       "Mean Diameter (cm)",
                       "Median Diameter (cm)",
                       "Standard Deviation",
                       "Sample Size")) %>% 
-  kable_styling(full_width = FALSE)
+  kable_classic(full_width = FALSE)
 
 ```
 
 ### Section 2
-```{r}
+```{r, message = FALSE}
 
 purple_urchins <- urchins %>% 
   filter(common_name == "Purple Urchin") %>% 
-  mutate(date = mdy(date),
-         year = year(date),
-         site_full = case_when(
+  mutate(date = mdy(date), # converts the date column class from function to date
+         year = year(date), # makes a new column splicing the year from the date column
+         site_full = case_when( # makes a new column converting the short names to the full names of the sites
            site == "NAPL" ~ "Naples Reef",
            site == "AQUE" ~ "Arroyo Quemado Reef",
            site == "CARP" ~ "Carpinteria Reef",
@@ -80,7 +80,7 @@ purple_urchins <- urchins %>%
 
 purple_urchins_stats <- purple_urchins %>% 
   group_by(year,site_full) %>% 
-  summarize(count = n())
+  summarize(count = n()) # generates a count of purple observations by year and site
 
 ```
 
@@ -89,9 +89,13 @@ purple_urchins_stats <- purple_urchins %>%
 purple_urchins_plot <- ggplot(data = purple_urchins_stats,
                               aes(x = year, y = count)) +
   geom_line(aes(color = site_full)) +
-  theme_classic() 
-  
+  theme_classic() +
+  guides(col = guide_legend("Sampling Sites")) +
+  labs(x = "year",
+       y = "sea urchin count",
+       title = "Purple Sea Urchin Populations in Santa Barbara Reefs ") 
 
 ggplotly(purple_urchins_plot)
-```
 
+```
+**Figure 2**
