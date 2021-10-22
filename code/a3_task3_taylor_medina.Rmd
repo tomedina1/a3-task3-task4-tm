@@ -7,8 +7,10 @@ output: html_document
 
 **Data:** Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b. 
 
+### Setup
 ```{r setup, include=TRUE, warning=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+options(digits = 3)
 
 # Load in packages
 library(tidyverse)
@@ -16,10 +18,12 @@ library(here)
 library(kableExtra)
 library(plotly)
 library(janitor)
+library(lubridate)
 
 ```
 
-```{r}
+### Section 1
+```{r, message = FALSE}
 
 urchins <- read_csv(here("data", "urchins.csv")) %>% 
   clean_names()
@@ -38,5 +42,56 @@ urchins_plot <- ggplot(data = urchins,
 
 ggplotly(urchins_plot)
 
+```
+**Figure 1**
+
+```{r}
+
+urchin_stats <- urchins %>% 
+  group_by(common_name) %>% 
+  summarize(mean_diameter_cm = mean(size, na.rm = TRUE),
+            median_diameter_cm = median(size, na.rm = TRUE),
+            standard_deviation = sd(size, na.rm = TRUE),
+            sample_size = n())
+
+urchin_stats %>% 
+  kable(col.names = c("Species",
+                      "Mean Diameter (cm)",
+                      "Median Diameter (cm)",
+                      "Standard Deviation",
+                      "Sample Size")) %>% 
+  kable_styling(full_width = FALSE)
+
+```
+
+### Section 2
+```{r}
+
+purple_urchins <- urchins %>% 
+  filter(common_name == "Purple Urchin") %>% 
+  mutate(date = mdy(date),
+         year = year(date),
+         site_full = case_when(
+           site == "NAPL" ~ "Naples Reef",
+           site == "AQUE" ~ "Arroyo Quemado Reef",
+           site == "CARP" ~ "Carpinteria Reef",
+           site == "MOHK" ~ "Mohawk Reef",
+           site == "IVEE" ~ "Isla Vista Reef"))
+
+purple_urchins_stats <- purple_urchins %>% 
+  group_by(year,site_full) %>% 
+  summarize(count = n())
+
+```
+
+```{r}
+
+purple_urchins_plot <- ggplot(data = purple_urchins_stats,
+                              aes(x = year, y = count)) +
+  geom_line(aes(color = site_full)) +
+  theme_classic() 
+  
+
+ggplotly(purple_urchins_plot)
 ```
 
