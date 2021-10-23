@@ -1,0 +1,43 @@
+---
+title: "Task 4"
+author: "Taylor Medina"
+date: "10/23/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# load in packages
+library(tidyverse)
+library(here)
+library(kableExtra)
+library(plotly)
+library(janitor)
+library(lubridate)
+
+```
+
+
+```{r}
+
+napl_urchins <- read_csv(here("data", "urchins.csv")) %>% 
+  clean_names() %>% 
+  mutate(date = ymd(date),
+         year = year(date)) %>% 
+  filter(year == "2010", 
+         common_name == "Purple Urchin",
+         site == "NAPL")
+
+napl_urchins_stats <- napl_urchins %>% 
+  group_by(treatment) %>% 
+  summarize(mean_diameter_cm = mean(size),
+            standard_deviation = sd(size),
+            sample_size = n())
+
+```
+
+```{r}
+
+```
+
