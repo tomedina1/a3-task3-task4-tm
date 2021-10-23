@@ -19,7 +19,7 @@ library(lubridate)
 ```
 
 
-```{r}
+```{r, message = FALSE}
 
 napl_urchins <- read_csv(here("data", "urchins.csv")) %>% 
   clean_names() %>% 
@@ -37,7 +37,48 @@ napl_urchins_stats <- napl_urchins %>%
 
 ```
 
+
 ```{r}
+
+napl_urchins_hist <- ggplot(data = napl_urchins,
+                            aes(x = size)) +
+  geom_histogram(aes(fill = treatment), color = "black", binwidth = 0.5) +
+  facet_wrap(~ treatment) +
+  theme_classic() +
+  scale_y_continuous(expand = c(0,0)) +
+  labs(x = "diameter (cm)",
+       y = "count")
+  
+
+ggplotly(napl_urchins_hist)
+
+```
+**Figure 1:**
+
+```{r}
+
+napl_urchins_qq <- ggplot(data = napl_urchins,
+                          aes(sample = size)) +
+  stat_qq() +
+  stat_qq_line(aes(color = treatment)) +
+  facet_wrap(~ treatment) +
+  theme_classic() 
+
+ggplotly(napl_urchins_qq)
+
+```
+**Figure 2:** 
+
+
+```{r}
+
+napl_urchins_stats %>% 
+  kable(col.names = c("Treatment",
+                      "Mean Diameter (cm)",
+                      "Standard Deviation ()",
+                      "Sample Size "),
+        caption = "Table 1: Statistical Summary of Purple Urchin Diameters (cm) ") %>% 
+  kable_classic(full_width = FALSE)
 
 ```
 
