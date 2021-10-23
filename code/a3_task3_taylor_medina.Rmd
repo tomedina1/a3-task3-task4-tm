@@ -43,7 +43,7 @@ urchins_plot <- ggplot(data = urchins,
 ggplotly(urchins_plot)
 
 ```
-**Figure 1**
+**Figure 1:** Size Distribution of Purple and Red Sea Urchins in Santa Barbara Reefs
 
 ```{r}
 
@@ -59,7 +59,8 @@ urchin_stats %>%
                       "Mean Diameter (cm)",
                       "Median Diameter (cm)",
                       "Standard Deviation",
-                      "Sample Size")) %>% 
+                      "Sample Size"),
+        caption = "Table 1: Summary Statistics of Purple and Red Urchins in Santa Barbara Reefs") %>% 
   kable_classic(full_width = FALSE)
 
 ```
