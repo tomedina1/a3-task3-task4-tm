@@ -7,7 +7,7 @@ output: html_document
 
 **Data:** Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b. 
 
-### Setup
+### **Setup**
 ```{r setup, include=TRUE, warning=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 options(digits = 3) # sets sig figs to 3
@@ -22,7 +22,10 @@ library(lubridate)
 
 ```
 
-### Section 1
+### **Section 1**
+The goal for this section is to generate a histogram comparing the distribution of urchin diameters among red and purple urchins and to generate a summary table of the mean urchin diameter, the median urchin diameter, the standard deviation, and the sample size of the purple and red urchin populations. The `geom_histogram()` and `kable()` functions are used.
+
+#### Creating a histogram plot
 ```{r, message = FALSE}
 
 urchins <- read_csv(here("data", "urchins.csv")) %>% 
@@ -32,8 +35,7 @@ urchins_plot <- ggplot(data = urchins,
        aes(x = size)) +
   geom_histogram(bins = 10, aes(fill = common_name), color = "black") +
   facet_wrap(~ common_name) + # splits plots by species
-  xlim(0,15) + # sets x limit to 15 cm
-  ylim(0,14000) + # sets y limit to a count of 14000
+  scale_y_continuous(expand = c(0,0)) +
   scale_fill_manual(values = c("purple","red")) + # specifies colors manually
   theme_classic() +
   labs(x = "urchin diameter (cm)",
@@ -45,6 +47,7 @@ ggplotly(urchins_plot)
 ```
 **Figure 1:** Size Distribution of Purple and Red Sea Urchins in Santa Barbara Reefs
 
+#### Generating a summary table
 ```{r}
 
 urchin_stats <- urchins %>% 
@@ -65,7 +68,12 @@ urchin_stats %>%
 
 ```
 
-### Section 2
+The red urchins are 2.31 cm larger on average (or 52% larger) than purple urchins in Santa Barbara reefs according to **Table 1**. They also have a median diameter that is 2.5 cm greater and a larger standard deviation as well. According to **Figure 1**, the purple urchins are more localized along the smaller diameters while the red urchins are more evenly spread out.
+
+### **Section 2**
+The goal for this section is to manipulate the 'urchins.csv' data set to only include purple urchins and change the site names to their full names. Then, a line plot needs to be generated to compare urchin populations by sample site for each year they were sampled. The class of the date in the dataset is changed using `mdy()` and the `case_when()` function is used for the *for* statements to change the site names to their full name. 
+
+#### Data Wrangling
 ```{r, message = FALSE}
 
 purple_urchins <- urchins %>% 
@@ -85,18 +93,20 @@ purple_urchins_stats <- purple_urchins %>%
 
 ```
 
+#### Generating a line plot
 ```{r}
 
 purple_urchins_plot <- ggplot(data = purple_urchins_stats,
                               aes(x = year, y = count)) +
+  geom_point(aes(color = site_full)) +
   geom_line(aes(color = site_full)) +
   theme_classic() +
-  guides(col = guide_legend("Sampling Sites")) +
+  guides(col = guide_legend("Sampling Sites")) + # changes name of legend
   labs(x = "year",
-       y = "sea urchin count",
-       title = "Purple Sea Urchin Populations in Santa Barbara Reefs ") 
+       y = "sea urchin count") 
 
 ggplotly(purple_urchins_plot)
 
 ```
-**Figure 2**
+**Figure 2** Comparison of Purple Urchin Counts in Santa Barbara Reefs
+

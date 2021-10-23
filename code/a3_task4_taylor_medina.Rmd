@@ -4,9 +4,10 @@ author: "Taylor Medina"
 date: "10/23/2021"
 output: html_document
 ---
-
-```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+### Setup
+```{r setup, include=TRUE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+options(digits = 3)
 
 # load in packages
 library(tidyverse)
@@ -19,7 +20,7 @@ library(lubridate)
 ```
 
 
-```{r, message = FALSE}
+```{r, warning = FALSE, message = FALSE}
 
 napl_urchins <- read_csv(here("data", "urchins.csv")) %>% 
   clean_names() %>% 
