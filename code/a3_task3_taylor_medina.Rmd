@@ -61,7 +61,7 @@ urchin_stats %>%
   kable(col.names = c("Species", 
                       "Mean Diameter (cm)",
                       "Median Diameter (cm)",
-                      "Standard Deviation",
+                      "Standard Deviation (cm)",
                       "Sample Size"),
         caption = "Table 1: Summary Statistics of Purple and Red Urchins in Santa Barbara Reefs") %>% 
   kable_classic(full_width = FALSE)
@@ -108,5 +108,6 @@ purple_urchins_plot <- ggplot(data = purple_urchins_stats,
 ggplotly(purple_urchins_plot)
 
 ```
-**Figure 2** Comparison of Purple Urchin Counts in Santa Barbara Reefs
+**Figure 2:** Comparison of Purple Urchin Counts in 5 Santa Barbara Reefs
 
+Overall, there is a decline in the population of sea urchins in the Santa Barbara Reef. To determine if there is actual decline, the sample site areas need to be kept constant and the yearly sampling needs to be done at the same time as jumps in population could be associated with breeding season or natural moments of population decline due to the season. 

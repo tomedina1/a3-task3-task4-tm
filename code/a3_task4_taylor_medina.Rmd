@@ -1,9 +1,14 @@
 ---
-title: "Task 4"
+title: "Task 4 - Purple Urchins at Naples Reef in 2010"
 author: "Taylor Medina"
 date: "10/23/2021"
 output: html_document
 ---
+
+This task requires the wrangling of the `urchins.csv` data set to include on purple urchins in the Naples Reef Sampling Site in the year 2010. Then, a statistical summary is needed in order to visualize the difference in urchin size in two different treatments, one with no kelp removal and the other with annual kelp removal. A histogram and a qq-plot is generated to visualize the differences in purple urchin sizes.
+
+**Data:** Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b. 
+
 ### Setup
 ```{r setup, include=TRUE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -19,67 +24,75 @@ library(lubridate)
 
 ```
 
-
+### Data Wrangling
+The `lubridate::ymd()` is used to convert the date column to a date class in order to splice out the year to be filtered out. The commands `group_by()` and `summarize()` is used to generate a statistical summary of the sizes of the purple urchins in different treatments.
 ```{r, warning = FALSE, message = FALSE}
 
 napl_urchins <- read_csv(here("data", "urchins.csv")) %>% 
   clean_names() %>% 
-  mutate(date = ymd(date),
-         year = year(date)) %>% 
+  mutate(date = ymd(date), # change format and class of the date column
+         year = year(date)) %>% # add a new column that splices the year from the date column
   filter(year == "2010", 
          common_name == "Purple Urchin",
          site == "NAPL")
 
 napl_urchins_stats <- napl_urchins %>% 
   group_by(treatment) %>% 
-  summarize(mean_diameter_cm = mean(size),
-            standard_deviation = sd(size),
+  summarize(mean_diameter_cm = mean(size), # calculated mean diameter
+            standard_deviation = sd(size), # calculates standard deviation of size
             sample_size = n())
 
 ```
 
-
+### Histogram Plot
 ```{r}
 
 napl_urchins_hist <- ggplot(data = napl_urchins,
                             aes(x = size)) +
-  geom_histogram(aes(fill = treatment), color = "black", binwidth = 0.5) +
-  facet_wrap(~ treatment) +
-  theme_classic() +
-  scale_y_continuous(expand = c(0,0)) +
+  geom_histogram(aes(fill = treatment), color = "black", binwidth = 0.5) + # make color based on treatment
+  facet_wrap(~ treatment) + # split up plot by treatment
+  xlim(0,7) + # change the x-limit
+  scale_y_continuous(expand = c(0,0)) + # make x-axis start at 0
+
+  theme_classic() + 
   labs(x = "diameter (cm)",
        y = "count")
   
-
 ggplotly(napl_urchins_hist)
 
 ```
-**Figure 1:**
+**Figure 1:** Size Distribution of Purple Urchins in different Treatments
 
+### QQ-Plot
 ```{r}
 
 napl_urchins_qq <- ggplot(data = napl_urchins,
                           aes(sample = size)) +
-  stat_qq() +
-  stat_qq_line(aes(color = treatment)) +
-  facet_wrap(~ treatment) +
-  theme_classic() 
+  stat_qq() + # plots points
+  stat_qq_line(aes(color = treatment)) + # adds trend line to qq-plot
+  facet_wrap(~ treatment) + # splits up plot by treatment
+  theme_classic() +
+  labs(x = "standard deviation (cm)",
+       y = "Size Quartile")
 
 ggplotly(napl_urchins_qq)
 
 ```
-**Figure 2:** 
+**Figure 2:** QQ-plot of the Purple Urchin sizes in different Treatments
 
+The purple urchins in the control treatment follow a normal distribution as compared to that in the annual treatment where the sizes are skewed right, according to **Figure 1**, where they tend to be smaller. **Figure 2** displays how the quartiles fro the control treatment are fitted better to the line better than the annual treatment, where the majority of the sizes are on the lower quartiles.
 
+### Statistical Table
 ```{r}
 
 napl_urchins_stats %>% 
   kable(col.names = c("Treatment",
                       "Mean Diameter (cm)",
-                      "Standard Deviation ()",
-                      "Sample Size "),
+                      "Standard Deviation (cm)",
+                      "Sample Size"),
         caption = "Table 1: Statistical Summary of Purple Urchin Diameters (cm) ") %>% 
-  kable_classic(full_width = FALSE)
+  kable_classic(full_width = FALSE) %>% 
+  footnote(general = "Annual: annual kelp removal. Control: no kelp removal") # adds a footnote to the table
 
 ```
 
