@@ -5,12 +5,14 @@ date: "10/21/2021"
 output: html_document
 ---
 
+This task requires the use of sea urchin data from 5 Santa Barbara reefs to generate statistical summaries of the size distribution, population change over time, and common statistical measures such as mean, median, and standard deviation.
+
 **Data:** Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b. 
 
 ### **Setup**
 ```{r setup, include=TRUE, warning=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-options(digits = 3) # sets sig figs to 3
+options(digits = 2) # sets sig figs to 2
 
 # Load in packages
 library(tidyverse)
@@ -40,7 +42,8 @@ urchins_plot <- ggplot(data = urchins,
   theme_classic() +
   labs(x = "urchin diameter (cm)",
        y = "frequency",
-       fill = "Common Name") # sets name of legend
+       fill = "Common Name",
+       title = "Size Distribution of Sea Urchins in Santa Barbara Reefs") # sets name of legend
 
 ggplotly(urchins_plot)
 
@@ -103,7 +106,8 @@ purple_urchins_plot <- ggplot(data = purple_urchins_stats,
   theme_classic() +
   guides(col = guide_legend("Sampling Sites")) + # changes name of legend
   labs(x = "year",
-       y = "sea urchin count") 
+       y = "sea urchin count",,
+       title = "Sea urchin Populations in 5 Santa Barbara Reefs") 
 
 ggplotly(purple_urchins_plot)
 

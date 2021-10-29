@@ -12,7 +12,7 @@ This task requires the wrangling of the `urchins.csv` data set to include on pur
 ### Setup
 ```{r setup, include=TRUE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-options(digits = 3)
+options(digits = 2)
 
 # load in packages
 library(tidyverse)
@@ -69,7 +69,6 @@ ggplotly(napl_urchins_hist)
 napl_urchins_qq <- ggplot(data = napl_urchins,
                           aes(sample = size)) +
   stat_qq() + # plots points
-  stat_qq_line(aes(color = treatment)) + # adds trend line to qq-plot
   facet_wrap(~ treatment) + # splits up plot by treatment
   theme_classic() +
   labs(x = "standard deviation (cm)",
